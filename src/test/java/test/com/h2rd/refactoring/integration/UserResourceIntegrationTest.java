@@ -15,43 +15,71 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Integration test case (end to end test case) to test UserResource
+ * functionality.
+ *
+ * @author Sumit Sarkar
+ */
+
 public class UserResourceIntegrationTest extends BaseEndpointIntegrationTest {
     static final String END_POINT = "/users";
 
+    /**
+     * Test find user information
+     *
+     * @throws Exception
+     */
     @Test
     public void getUsers() throws Exception {
+
         User user = new User();
-        user.setEmail("user2@mail.com");
-        user.setName("Jane Doe");
-        user.setRoles(Arrays.asList("supertester", "superdeveloper"));
+
+        user.setEmail("sumit@sarkar.com");
+        user.setName("Sumit Sarkar");
+        user.setRoles(Arrays.asList("admin", "admin1"));
+
         Entity<User> userEntity = Entity.entity(user, MediaType.APPLICATION_JSON);
 
         Response response = target(END_POINT).request().accept(MediaType.APPLICATION_JSON).post(userEntity);
+
         assertEquals(END_POINT + "/" + user.getEmail(), URLDecoder.decode(new URL(response.getHeaderString("Location")).getPath(), "utf-8"));
+
         User createdUser = response.readEntity(User.class);
+
         assertEquals(user.getEmail(), createdUser.getEmail());
         assertEquals(user.getName(), createdUser.getName());
         assertEquals(user.getRoles(), createdUser.getRoles());
 
         response = target("users").request().accept(MediaType.APPLICATION_JSON).get();
-        List<User> users = response.readEntity(new GenericType<List<User>>() {
-        });
+
+        List<User> users = response.readEntity(new GenericType<List<User>>() {});
         assertEquals(1, users.size());
+
         User foundUser = users.get(0);
+
         assertEquals(user.getEmail(), foundUser.getEmail());
         assertEquals(user.getName(), foundUser.getName());
         assertEquals(user.getRoles(), foundUser.getRoles());
+
         response.close();
     }
 
+    /**
+     * Test: Trying to add user with invalid email address
+     */
+
     @Test
     public void addUserInvalidEmailInput() {
+
         User user = new User();
-        user.setName("Jane Doe");
-        user.setRoles(Arrays.asList("supertester", "superdeveloper"));
+
+        user.setName("Sumit Sarkar");
+        user.setRoles(Arrays.asList("admin", "admin1"));
+
         Entity<User> userEntity = Entity.entity(user, MediaType.APPLICATION_JSON);
 
-        //missing email
+        //put email as null
         user.setEmail(null);
         Response response = target(END_POINT).request().accept(MediaType.APPLICATION_JSON).post(userEntity);
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
@@ -62,25 +90,30 @@ public class UserResourceIntegrationTest extends BaseEndpointIntegrationTest {
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
 
 
-        //bad email
-        user.setEmail("a@");
+        //invalid email address
+        user.setEmail("23@");
         response = target(END_POINT).request().accept(MediaType.APPLICATION_JSON).post(userEntity);
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
 
-        //bad email
-        user.setEmail("a@a.");
+        //invalid email address
+        user.setEmail("we@2323.");
         response = target(END_POINT).request().accept(MediaType.APPLICATION_JSON).post(userEntity);
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
     }
 
+    /**
+     * Test: trying to add user with invalid input
+     */
     @Test
     public void addUserInvalidNameInput() {
+
         User user = new User();
-        user.setEmail("user2@mail.com");
-        user.setRoles(Arrays.asList("supertester", "superdeveloper"));
+        user.setEmail("sumit@sarkar.com");
+        user.setRoles(Arrays.asList("admin", "admin1"));
+
         Entity<User> userEntity = Entity.entity(user, MediaType.APPLICATION_JSON);
 
-        //missing name
+        //put in name field as null
         user.setName(null);
         Response response = target(END_POINT).request().accept(MediaType.APPLICATION_JSON).post(userEntity);
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
@@ -91,14 +124,20 @@ public class UserResourceIntegrationTest extends BaseEndpointIntegrationTest {
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
     }
 
+    /**
+     * Test: Adding user by addind invalid roles
+     */
     @Test
     public void addUserInvalidRolesInput() {
+
         User user = new User();
-        user.setEmail("user2@mail.com");
-        user.setName("Jane Doe");
+
+        user.setEmail("sumit@sarkar.com");
+        user.setName("Sumit Sarkar");
+
         Entity<User> userEntity = Entity.entity(user, MediaType.APPLICATION_JSON);
 
-        //empty roles
+        //roles as empty
         user.getRoles().clear();
         Response response = target(END_POINT).request().accept(MediaType.APPLICATION_JSON).post(userEntity);
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());

@@ -21,6 +21,12 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * UNIT test case for UserResource.java Class
+ *
+ * @author Sumit Sarkar
+ */
+
 @RunWith(MockitoJUnitRunner.class)
 public class UserResourceUnitTest {
 
@@ -35,7 +41,7 @@ public class UserResourceUnitTest {
 
     @Test
     public void getUsers() {
-        User user = new User("sumit@arkar.com", "Sumit", Arrays.asList("admin"));
+        User user = new User("sumit@sarkar.com", "Sumit", Arrays.asList("admin"));
 
         Set<User> users = new HashSet<User>(Arrays.asList(user));
         when(userDao.getUsers()).thenReturn(users);
@@ -53,6 +59,7 @@ public class UserResourceUnitTest {
 
     @Test
     public void getUsersNoUsersFound() {
+
         when(userDao.getUsers()).thenReturn(new HashSet<User>());
         Response response = userResource.getUsers();
         assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatus());
@@ -61,7 +68,8 @@ public class UserResourceUnitTest {
 
     @Test
     public void deleteUserNoUserFound() {
-        String email = "email@email.com";
+
+        String email = "sumit@sarkar.com";
         when(userDao.findUser(email)).thenReturn(null);
         Response response = userResource.deleteUser(email);
         assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
@@ -70,23 +78,32 @@ public class UserResourceUnitTest {
 
     @Test
     public void deleteUser() {
-        String email = "email@email.com";
+
+        String email = "sumit@sarkar.com";
+
         User user = new User("test@test.com", "test", Arrays.asList("role1"));
         when(userDao.findUser(email)).thenReturn(user);
+
         Response response = userResource.deleteUser(email);
         verify(userDao).deleteUser(user);
+
         assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatus());
         assertNull("expecting null", response.getEntity());
     }
 
     @Test
     public void findUser() {
-        String email = "email@email.com";
+
+        String email = "sumit@sarkar.com";
+
         User user = new User("test@test.com", "test", Arrays.asList("role1"));
         when(userDao.findUser(email)).thenReturn(user);
+
         Response response = userResource.findUser(email);
         assertEquals(HttpStatus.OK.value(), response.getStatus());
+
         User outputUser = (User) response.getEntity();
+
         assertEquals(user.getName(), outputUser.getName());
         assertEquals(user.getEmail(), outputUser.getEmail());
         assertEquals(user.getRoles(), outputUser.getRoles());
@@ -94,8 +111,10 @@ public class UserResourceUnitTest {
 
     @Test
     public void findUserNotFound() {
-        String email = "email@email.com";
+
+        String email = "sumit@sarkar.com";
         when(userDao.findUser(email)).thenReturn(null);
+
         Response response = userResource.findUser(email);
         assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
         assertNull("expecting null", response.getEntity());
@@ -103,9 +122,11 @@ public class UserResourceUnitTest {
 
     @Test
     public void updateUserNotFound() {
-        String email = "email@email.com";
+
+        String email = "sumit@sarkar.com";
         User user = new User("test@test.com", "test", Arrays.asList("role1"));
         when(userDao.findUser(email)).thenReturn(null);
+
         Response response = userResource.updateUser(email, user);
         assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
         assertNull("expecting null", response.getEntity());
@@ -113,7 +134,7 @@ public class UserResourceUnitTest {
 
     @Test
     public void updateUser() {
-        String email = "email@email.com";
+        String email = "sumit@sarkar.com";
         User user = new User("test2@test.com", "new name", Arrays.asList("role1", "roles2", "roles3"));
         when(userDao.findUser(email)).thenReturn(user);
         Response response = userResource.updateUser(email, user);
@@ -133,7 +154,7 @@ public class UserResourceUnitTest {
 
     @Test
     public void addUserFound() {
-        User user = new User("test2@test.com", "new name", Arrays.asList("role1", "roles2", "roles3"));
+        User user = new User("sumit@sarkar.com", "new name", Arrays.asList("role1", "roles2", "roles3"));
 
         when(userDao.findUser(user.getEmail())).thenReturn(user);
 
@@ -145,7 +166,7 @@ public class UserResourceUnitTest {
 
     @Test
     public void addUser() {
-        User user = new User("test2@test.com", "new name", Arrays.asList("role1", "roles2", "roles3"));
+        User user = new User("sumit@sarkar.com", "new name", Arrays.asList("role1", "roles2", "roles3"));
         when(userDao.findUser(user.getEmail())).thenReturn(null);
 
         UriBuilder uriBuilder = new JerseyUriBuilder();

@@ -1,7 +1,12 @@
 package com.h2rd.refactoring.usermanagement.models;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -20,7 +25,6 @@ import java.util.List;
 @XmlRootElement
 @NoArgsConstructor
 @Builder
-@EqualsAndHashCode
 public class User implements Comparable {
 
     @NotEmpty
@@ -45,8 +49,29 @@ public class User implements Comparable {
         this.setRoles(roles);
     }
 
-    public int compareTo(Object o) {
-        User myClass = (User) o;
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+
+        if (object == null || getClass() != object.getClass())
+            return false;
+
+        User user = (User) object;
+
+        return new EqualsBuilder()
+                .append(email, user.email)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(email)
+                .toHashCode();
+    }
+
+    public int compareTo(Object object) {
+        User myClass = (User) object;
         return new CompareToBuilder().append(this.email, myClass.email).toComparison();
     }
 }

@@ -2,8 +2,7 @@ package com.h2rd.refactoring.web.controllers;
 
 import com.h2rd.refactoring.usermanagement.dao.UserDao;
 import com.h2rd.refactoring.usermanagement.models.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.Valid;
@@ -20,8 +19,8 @@ import java.util.Set;
  */
 
 @Path("users")
+@Slf4j
 public class UserResource {
-    static Logger LOGGER = LoggerFactory.getLogger(UserResource.class);
 
     @Context
     UriInfo uriInfo;
@@ -29,70 +28,126 @@ public class UserResource {
     @Autowired
     UserDao userDao;
 
+    /**
+     * Add user
+     *
+     * @param user User
+     * @return Response
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response addUser(@Valid final User user) {
+
         User foundUser = userDao.findUser(user.getEmail());
+
         if (foundUser != null) {
-            LOGGER.debug("A User with email " + foundUser.getEmail() + " already exist");
+            log.debug("A User with email " + foundUser.getEmail() + " already exist");
             return Response.status(Response.Status.CONFLICT).build();
         }
+
         userDao.saveUser(user);
+
         URI uri = uriInfo.getAbsolutePathBuilder().path(user.getEmail()).build();
+
         return Response.created(uri).entity(user).build();
     }
+
+    /**
+     * Update User
+     *
+     * @param user  User
+     * @param email String
+     * @return Response
+     */
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{email}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Response updateUser(@PathParam("email") String email,
-                               @Valid final User user) {
-        LOGGER.debug("Updating User " + email);
+    public Response updateUser(@PathParam("email") String email, @Valid final User user) {
+
+        log.debug("Updating User " + email);
+
         User existingUser = userDao.findUser(email);
+
         if (existingUser == null) {
-            LOGGER.debug("User with email " + email + " not found");
+            log.debug("User with email " + email + " not found");
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+
         user.setEmail(email);
+
         userDao.updateUser(user);
+
         return Response.ok().entity(user).build();
     }
+
+    /**
+     * Delete User
+     *
+     * @param email String
+     * @return Response
+     */
 
     @DELETE
     @Path("{email}")
     public Response deleteUser(@PathParam("email") String email) {
-        LOGGER.debug("Deleting User " + email);
+
+        log.debug("Deleting User " + email);
+
         User existingUser = userDao.findUser(email);
+
         if (existingUser == null) {
-            LOGGER.debug("User with email " + email + " not found");
+            log.debug("User with email " + email + " not found");
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+
         userDao.deleteUser(existingUser);
+
         return Response.noContent().build();
     }
+
+    /**
+     * Delete User
+     *
+     * @return Response
+     */
 
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response getUsers() {
+
         Set<User> users = userDao.getUsers();
+
         if (users.isEmpty()) {
             return Response.noContent().build();
         }
+
         GenericEntity<Set<User>> usersEntity = new GenericEntity<Set<User>>(users) {
         };
+
         return Response.ok().entity(usersEntity).build();
     }
+
+    /**
+     * Find User by Email
+     *
+     * @param email String
+     * @return Response
+     */
 
     @GET
     @Path("{email}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response findUser(@PathParam("email") String email) {
-        LOGGER.debug("findUserByEmail=" + email);
+
+        log.debug("findUserByEmail=" + email);
+
         User user = userDao.findUser(email);
+
         if (user == null) {
-            LOGGER.debug("User with email " + email + " not found");
+            log.debug("User with email " + email + " not found");
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 

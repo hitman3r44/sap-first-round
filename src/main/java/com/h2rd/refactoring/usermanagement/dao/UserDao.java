@@ -29,5 +29,5 @@ public interface UserDao {
 
     User findUserByName(String name);
 
-    Set<User> findUsers(String name);
+    Set<User> findUsersByName(String name);
 }

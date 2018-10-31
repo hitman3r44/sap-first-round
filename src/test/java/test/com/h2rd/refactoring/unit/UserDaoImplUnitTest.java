@@ -11,12 +11,22 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+/**
+ * UNIT test case for UserDaoImpl.java Class
+ *
+ * @author Sumit Sarkar
+ */
+
 public class UserDaoImplUnitTest {
 
-    UserDaoImpl userDao = new UserDaoImpl();
+    UserDaoImpl userDaoImpl = new UserDaoImpl();
 
+    /**
+     * Test: Get all users
+     */
     @Test
     public void getUsers() {
+
         String email = "sumit@sarkar.com";
         String name = "Sumit Sarkar";
         String role1 = "admin";
@@ -28,16 +38,20 @@ public class UserDaoImplUnitTest {
         user.setEmail(email);
         user.setRoles(Arrays.asList(role1, role2));
 
-        userDao.saveUser(user);
+        userDaoImpl.saveUser(user);
 
-        List<User> users = new ArrayList(userDao.getUsers());
+        List<User> users = new ArrayList(userDaoImpl.getUsers());
 
         assert users.size() == 1;
         assert users.get(0).equals(user);
     }
 
+    /**
+     * Test: Save User
+     */
     @Test
     public void saveUser() {
+
         String email = "sumit@sarkar.com";
         String name = "Sumit Sarkar";
         String role1 = "admin";
@@ -49,35 +63,43 @@ public class UserDaoImplUnitTest {
         user.setEmail(email);
         user.setRoles(Arrays.asList(role1, role2));
 
-        userDao.saveUser(user);
-        assert 1 == userDao.getUsers().size();
+        userDaoImpl.saveUser(user);
+        assert 1 == userDaoImpl.getUsers().size();
 
-        User foundUser = userDao.findUser(email);
+        User foundUser = userDaoImpl.findUser(email);
 
         assert user.getName().equals(foundUser.getName());
         assert user.getEmail().equals(foundUser.getEmail());
         assert user.getRoles().equals(foundUser.getRoles());
 
-        userDao.saveUser(user);
-        assert 1 == userDao.getUsers().size();
+        userDaoImpl.saveUser(user);
+        assert 1 == userDaoImpl.getUsers().size();
     }
 
+    /**
+     * Test: Delete Users
+     */
     @Test
     public void deleteUser() {
+
         User user = new User();
 
         user.setName("Sumit Sarkar");
         user.setEmail("sumit@sarkar.com");
         user.setRoles(Arrays.asList("admin", "admin1"));
 
-        userDao.deleteUser(user);
+        userDaoImpl.deleteUser(user);
 
-        assertEquals(0, userDao.getUsers().size());
-        userDao.deleteUser(user);
+        assertEquals(0, userDaoImpl.getUsers().size());
+        userDaoImpl.deleteUser(user);
     }
 
+    /**
+     * Test: Find Users
+     */
     @Test
     public void findUser() {
+
         String email = "sumit@sarkar.com";
         String name = "Sumit Sarkar";
         String role1 = "admin";
@@ -89,13 +111,17 @@ public class UserDaoImplUnitTest {
         user.setEmail(email);
         user.setRoles(Arrays.asList(role1, role2));
 
-        userDao.saveUser(user);
-        assertEquals(user, userDao.findUser(email));
-        assertNull("expecting null", userDao.findUser("nonexisting"));
+        userDaoImpl.saveUser(user);
+        assertEquals(user, userDaoImpl.findUser(email));
+        assertNull("expecting null", userDaoImpl.findUser("nonexisting"));
     }
 
+    /**
+     *  Test: Find user by name
+     */
     @Test
     public void findUserByName() {
+
         String email = "sumit@sarkar.com";
         String name = "Sumit Sarkar";
         String role1 = "admin";
@@ -107,13 +133,17 @@ public class UserDaoImplUnitTest {
         user.setEmail(email);
         user.setRoles(Arrays.asList(role1, role2));
 
-        userDao.saveUser(user);
-        assertEquals(user, userDao.findUserByName(name));
-        assertNull("expecting null", userDao.findUserByName("nonexisting"));
+        userDaoImpl.saveUser(user);
+        assertEquals(user, userDaoImpl.findUserByName(name));
+        assertNull("expecting null", userDaoImpl.findUserByName("nonexisting"));
     }
 
+    /**
+     *  Test: Update Users
+     */
     @Test
     public void updateUser() {
+
         String email = "sumit@sarkar.com";
         String name = "Sumit Sarkar";
         String role1 = "admin";
@@ -125,20 +155,20 @@ public class UserDaoImplUnitTest {
         user.setEmail(email);
         user.setRoles(Arrays.asList(role1, role2));
 
-        userDao.saveUser(user);
+        userDaoImpl.saveUser(user);
 
 
-        String newName = "new name";
+        String newName = "Sumit Sarkar";
         String newRole1 = "newrole1";
         String newRole2 = "newrole2";
         String newRole3 = "newrole3";
 
         User newUser = new User(email, newName, Arrays.asList(newRole1, newRole2, newRole3));
 
-        userDao.updateUser(newUser);
-        assertEquals(1, userDao.getUsers().size());
+        userDaoImpl.updateUser(newUser);
+        assertEquals(1, userDaoImpl.getUsers().size());
 
-        List<User> users = new ArrayList(userDao.getUsers());
+        List<User> users = new ArrayList(userDaoImpl.getUsers());
         assert users.size() == 1;
 
         User foundUser = users.get(0);
@@ -148,9 +178,9 @@ public class UserDaoImplUnitTest {
         assertEquals(newUser.getRoles(), foundUser.getRoles());
 
         User nonExistingNewUser = new User("nonexistingemail", newName, Arrays.asList(newRole1, newRole2, newRole3));
-        userDao.updateUser(nonExistingNewUser);
+        userDaoImpl.updateUser(nonExistingNewUser);
 
-        users = new ArrayList(userDao.getUsers());
+        users = new ArrayList(userDaoImpl.getUsers());
         assertEquals(1, users.size());
 
         foundUser = users.get(0);

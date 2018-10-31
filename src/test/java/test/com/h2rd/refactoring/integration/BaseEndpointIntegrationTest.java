@@ -10,6 +10,12 @@ import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.springframework.web.context.ContextLoaderListener;
 
+/**
+ * Base End Points Integration test case (end to end test case) to test UserResource
+ *
+ * @author Sumit Sarkar
+ */
+
 public abstract class BaseEndpointIntegrationTest extends JerseyTest {
 
     @Override
